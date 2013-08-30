@@ -1,0 +1,90 @@
+{% load static %} 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}Scheduler{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="{{ STATIC_URL }}css/main.css" rel="stylesheet" media="screen">
+    <style>
+      body {
+        padding-top: 50px; /* When using the navbar-top-fixed */
+        };
+    </style>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+    <!--<script src="{{ STATIC_URL }}js/typeahead.js"></script>-->
+    <!--<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>-->
+  </head>
+  <body>
+    <script>
+      $(function() {
+        $('#search').typeahead({
+          source: function (query, process) {
+            results = [];
+            map = {};
+            $.get('/search', 
+              { query: query }, 
+              function (data) {
+                results = []
+                $.each(data, function (i, result) {
+                  map[result.name] = result;
+                  results.push(result.name);
+                });
+                return process(results);
+              });
+          },
+          updater: function (item) {
+            var selectedId = map[item].id;
+            if(map[item].is_user) {
+              window.location.href = "/user/"+selectedId;
+            } else {
+              window.location.href = "/course/"+selectedId;
+            }
+            return;
+          },
+          matcher: function (item) {
+            if (item.toLowerCase().indexOf(this.query.trim().toLowerCase()) != -1) {
+              return true;
+            }
+          },
+          sorter: function (items) {
+            return items.sort();
+          },
+          highlighter: function (item) {
+            var regex = new RegExp( '(' + this.query + ')', 'gi' );
+            return item.replace( regex, "<strong>$1</strong>" );
+          },
+        });
+      });
+    </script>
+    {% block header %}
+    <div class="navbar navbar-fixed-top navbar navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/home">Schejofy</a>
+          <form class="navbar-search" action="">
+            <input type="text" class="search-query span6" id="search" data-provide="typeahead" placeholder="Search for people and classes">
+          </form>
+          <div class="nav-collapse pull-right">
+            <ul class="nav">
+              <li class="active"><a href="/home"><i class="icon-home icon-white"></i> Home</a></li>
+              <li><a href="#">Profile</a></li>
+              <li><a href="#">Logout</a></li>
+            </ul>
+          </div><!-- /.nav-collapse -->
+        </div><!-- /.container -->
+      </div><!-- /.navbar-inner -->
+    </div><!-- /.navbar -->
+    {% endblock %}
+    {% block content %}
+    {% endblock %}
+  </body>
+</html>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+	<h2>{{ course.name }}</h2>
+	<h4>Students:</h4>
+	{% load extra_tags %}
+	{% for member in members_shopping %}
+		<p><a href='/user/{{ member.id }}'>{{member.first_name}} {{member.last_name}}</a>{% if members_shopping|get_item:member %} (shopping){% endif %}</p>
+	{% endfor %}
+</div>
+{% endblock %}

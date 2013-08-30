@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h3>Almost there!</h3>
+  <form class="form-horizontal" action="/register/" method="post">{% csrf_token %}
+    <div class="control-group">
+      <label class="control-label" for="inputFirstName">First Name</label>
+      <div class="controls">
+        <input type="text" id="inputFirstName" name="firstName" placeholder="First Name">
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="inputLastName">Last Name</label>
+      <div class="controls">
+        <input type="text" id="inputLastName" name="lastName" placeholder="Last Name">
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn">Finish!</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

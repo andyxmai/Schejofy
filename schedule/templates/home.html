@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+<script type="text/javascript">
+$(function(){
+	$('#add_course').typeahead({
+	  source: function (query, process) {
+	    courses = [];
+	    map = {};
+	 
+	    // var data = [
+	    //     {"stateCode": "CA", "stateName": "California"},
+	    //     {"stateCode": "AZ", "stateName": "Arizona"},
+	    //     {"stateCode": "NY", "stateName": "New York"},
+	    //     {"stateCode": "NV", "stateName": "Nevada"},
+	    //     {"stateCode": "OH", "stateName": "Ohio"}
+	    // ];
+	 	
+	    var data = {{all_courses}};
+	    $.each(data, function (i, course) {
+	        map[course.name] = course;
+	        courses.push(course.name);
+	  	});
+
+	  	process(courses);
+	  },
+	  updater: function (item) {
+	    var selectedCourse = map[item].id;
+	    var user_id = 1;
+	    $.ajax({
+				type:"POST",
+				url:"/add_course/",
+				data: {
+				      'course_id': selectedCourse,
+				      'user_id': {{user.id}},
+				      'csrfmiddlewaretoken':'{{csrf_token}}'
+				      // all of this data is submitted via POST to your view.
+				      // in django, request.POST['background-color'] 
+				},
+				success: function(){
+					window.location.href = "/home";
+				}
+			});
+	  	return;
+	  },
+	  matcher: function (item) {
+	    if (item.toLowerCase().indexOf(this.query.trim().toLowerCase()) != -1) {
+	      return true;
+	  	}
+	  },
+	  sorter: function (items) {
+	    return items.sort();
+	  },
+	  highlighter: function (item) {
+	    var regex = new RegExp( '(' + this.query + ')', 'gi' );
+	  	return item.replace( regex, "<strong>$1</strong>" );
+	  },
+	});
+	$("a.remove").click(function() {
+   	var selectId = $(this).parent().parent("tr").attr('id');
+    $.ajax({ 
+      type: 'POST',
+    	url: '/remove_course/',
+			data: {
+			    'course_id': selectId,
+				  'user_id': {{user.id}},
+				  'csrfmiddlewaretoken':'{{csrf_token}}'
+			},
+			success: function() {
+				window.location.href = "/home";
+			},
+		});
+	});
+	$("input.shopping").change(function() { 
+		var is_shopping = 0;
+		var selectId = $(this).parent().parent().parent("tr").attr('id');
+    if($(this).is(":checked")) { 
+    	is_shopping = 1;
+    }
+    //debugger;
+    $.ajax({
+        url: '/change_shopping/',
+        type: 'POST',
+        data: { 
+        	'course_id': selectId,
+        	'user_id': {{user.id}}, 
+      		is_shopping:is_shopping, 
+      		'csrfmiddlewaretoken':'{{csrf_token}}' 
+      	},
+        success: function() {
+					window.location.href = "/home";
+				},
+    });
+  }); 
+});
+</script>
+<h2>{{ user.first_name }} {{ user.last_name }}</h2>
+<input id="add_course" class="span6" type="text" placeholder="Search to add courses…" data-provide="typeahead" data-items="4">
+  <!--<a href="/add_course" class="btn" type="button">Add</a>-->
+<h4>Current Classes:</h4>
+<div class="table_container">
+	<table class="table">
+	  <tbody>
+	  	{% load extra_tags %}
+	  	{% for course in courses %}
+	    <tr id="{{ course.id }}">
+	      <td class="remove"><a href="" class="remove"><i class="icon-remove"></i></a></td>
+	      <td><a href="/course/{{course.id}}">{{course.name}}<a></td>
+	      <td class="remove"><label class="checkbox"><input type="checkbox" class="shopping" {% if shopping|get_item:course %}checked{% endif %}> Shopping</label></td>
+	    </tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
+</div>
+</div>
+{% endblock %}
