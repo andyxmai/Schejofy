@@ -25,8 +25,9 @@ def chunks(l, n):
 		yield l[i:i+n]
 
 def home(request):
-	HOME_USER = User.objects.all()[0]
-	user = HOME_USER
+	#HOME_USER = User.objects.all()[0]
+	#user = HOME_USER
+	user = User.objects.create(first_name="Andy", last_name="Mai")
 	courses = user.course_set.all()
 
 	# get user's shopping classes
