@@ -15,6 +15,8 @@ CURRENT_DIR= '/Users/andymai/Developer/Web/scheduleApp'
 PROJECT_PATH = os.path.dirname(__file__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+DATABASES = {}
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
