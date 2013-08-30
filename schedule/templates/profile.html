@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+	{% if saved %}
+	<div class="alert alert-success">
+	  <button type="button" class="close" data-dismiss="alert">&times;</button>
+	  <strong>Awesome!</strong> Your profile has been updated.
+	</div>
+	{% endif %}
+	<h2>{{ user.first_name }} {{ user.last_name }}</h2>
+	<form class="form-horizontal" action="/profile/" method="post">{% csrf_token %}
+		<div class="control-group">
+	      <label class="control-label" for="inputFirstName">Year</label>
+	      <div class="controls">
+	        {{ form.year }}
+	      </div>
+	    </div>
+	    <div class="control-group">
+	      <label class="control-label" for="inputFirstName">Major</label>
+	      <div class="controls">
+	        <select>
+			  <option>1</option>
+			  <option>2</option>
+			  <option>3</option>
+			  <option>4</option>
+			  <option>5</option>
+			</select>
+	      </div>
+	    </div>
+	    <div class="control-group">
+	    <div class="controls">
+	      <button type="submit" class="btn btn-primary">Save</button>
+	    </div>
+	  </div>
+	</form>
+</div>
+{% endblock %}

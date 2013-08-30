@@ -102,11 +102,11 @@ $(function(){
   <!--<a href="/add_course" class="btn" type="button">Add</a>-->
 <h4>Current Classes:</h4>
 <div class="table_container">
-	<table class="table">
+	<table class="table schedule">
 	  <tbody>
 	  	{% load extra_tags %}
 	  	{% for course in courses %}
-	    <tr id="{{ course.id }}">
+	    <tr class="" id="{{ course.id }}">
 	      <td class="remove"><a href="" class="remove"><i class="icon-remove"></i></a></td>
 	      <td><a href="/course/{{course.id}}">{{course.name}}<a></td>
 	      <td class="remove"><label class="checkbox"><input type="checkbox" class="shopping" {% if shopping|get_item:course %}checked{% endif %}> Shopping</label></td>

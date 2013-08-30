@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     url(r'^change_shopping/$', 'scheduleApp.views.change_shopping'),
     url(r'^register_form/$', 'scheduleApp.views.register_form'),
     url(r'^register/$', 'scheduleApp.views.register'),
+    url(r'^profile/$', 'scheduleApp.views.profile'),
     url(r'^search/$', 'scheduleApp.views.search'),
 )
 

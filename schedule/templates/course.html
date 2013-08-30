@@ -6,9 +6,19 @@
 <div class="container">
 	<h2>{{ course.name }}</h2>
 	<h4>Students:</h4>
-	{% load extra_tags %}
-	{% for member in members_shopping %}
-		<p><a href='/user/{{ member.id }}'>{{member.first_name}} {{member.last_name}}</a>{% if members_shopping|get_item:member %} (shopping){% endif %}</p>
-	{% endfor %}
+	<div class="table_container">
+		<table class="table">
+		  <tbody>
+		  	{% load extra_tags %}
+		  	{% for member_group in members_shopping %}
+		    <tr>
+		    	{% for member in member_group %}
+		      <td class=""><a href="/user/{{ member|get_item:'id' }}">{{ member|get_item:'name' }}</a>{% if member|get_item:'is_shopping' %} (shopping){% endif %}</td>
+		      {% endfor %}
+		    </tr>
+		    {% endfor %}
+		  </tbody>
+		</table>
+	</div>
 </div>
 {% endblock %}

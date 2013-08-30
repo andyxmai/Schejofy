@@ -3,6 +3,9 @@ from django.http import HttpResponse
 from scheduleApp.models import User, Course, Membership
 from django.utils.safestring import mark_safe
 import json
+from scheduleApp.forms import ProfileForm
+
+HOME_USER = User.objects.all()[0]
 
 def index(request):
 	#return HttpResponse(html)
@@ -17,14 +20,19 @@ def get_user_shopping(user):
 			shopping[m.course] = False
 	return shopping
 
+def chunks(l, n):
+	""" Yield successive n-sized chunks from l.
+	"""
+	for i in xrange(0, len(l), n):
+		yield l[i:i+n]
+
 def home(request):
-	user = User.objects.all()[0]
+	user = HOME_USER
 	courses = user.course_set.all()
 
 	# get user's shopping classes
 	shopping = get_user_shopping(user)
 
-	print shopping
 	all_courses = []
 	allCourses = Course.objects.all()
 	for course in allCourses:
@@ -34,13 +42,19 @@ def home(request):
 
 def course(request, id):
 	course = Course.objects.get(id=id)
-	members_shopping = {}
+	members_shopping = []
 	for x in course.membership_set.all():
-	  if x.is_shopping:
-	    members_shopping[x.user] = True
-	  else:
-	    members_shopping[x.user] = False
+		temp = {}
+		temp['id'] = x.user.id
+		temp['name'] = x.user.first_name + ' ' + x.user.last_name
+		if x.is_shopping:
+			temp['is_shopping'] = True
+		else:
+			temp['is_shopping'] = False
+		members_shopping.append(temp)
 	#members = course.members.all()
+	members_shopping = list(chunks(members_shopping, 3))
+	print members_shopping
 	return render(request, 'course.html', {'course':course, 'members_shopping':members_shopping})
 
 def user(request, id):
@@ -79,6 +93,18 @@ def register(request):
 	last_name = request.POST['lastName']
 	new_user = User.objects.create(first_name=first_name, last_name=last_name)
 	return redirect('/home')
+
+def profile(request):
+	user = HOME_USER
+	if request.method == 'POST': # If the form has been submitted...
+		form = ProfileForm(request.POST) # A form bound to the POST data
+		user.year = request.POST.get('year')
+		user.save()
+		return render(request, 'profile.html', {'user':user, 'form':form, 'saved':True})
+	else:
+		form = ProfileForm(initial={'year':user.year}) # An unbound form
+
+	return render(request, 'profile.html', {'user':user, 'form':form, 'saved':False,})
 
 def search(request):
 	if request.is_ajax():
