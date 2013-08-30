@@ -5,8 +5,6 @@ from django.utils.safestring import mark_safe
 import json
 from scheduleApp.forms import ProfileForm
 
-HOME_USER = User.objects.all()[0]
-
 def index(request):
 	#return HttpResponse(html)
 	return render(request, 'index.html')
@@ -27,6 +25,7 @@ def chunks(l, n):
 		yield l[i:i+n]
 
 def home(request):
+	HOME_USER = User.objects.all()[0]
 	user = HOME_USER
 	courses = user.course_set.all()
 
@@ -95,6 +94,7 @@ def register(request):
 	return redirect('/home')
 
 def profile(request):
+	HOME_USER = User.objects.all()[0]
 	user = HOME_USER
 	if request.method == 'POST': # If the form has been submitted...
 		form = ProfileForm(request.POST) # A form bound to the POST data
